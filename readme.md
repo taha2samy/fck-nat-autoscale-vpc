@@ -1,79 +1,82 @@
 
-# FCK-NAT High Availability Terraform Setup
 
-This repository contains Terraform configuration to deploy an AWS VPC with a cost-effective, self-healing NAT solution using `fck-nat` within an Auto Scaling Group (ASG).
+# Terraform FCK-NAT High Availability
 
-## Overview
+This project deploys a cost-effective, self-healing NAT solution on AWS using `fck-nat` instances within an Auto Scaling Group. It includes a `Justfile` to automate deployment and simplify SSH connections to private resources.
 
-Instead of using the expensive managed AWS NAT Gateway, this setup utilizes a specialized ARM/x86 instance (`fck-nat`) optimized for network address translation. The instance is managed by an Auto Scaling Group to ensure high availability. If the NAT instance terminates, the ASG launches a new one, and a startup script automatically updates the private route table to point to the new instance.
+## Features
 
-## Architecture
-
-This setup creates the following resources:
-
-*   **VPC:** A custom VPC with IPv4 and IPv6 support.
-*   **Subnets:**
-    *   **Public Subnet:** Hosted in AZ-1, contains the NAT instance.
-    *   **Private Subnet:** Hosted in AZ-2, contains the application workload.
-*   **Gateways:**
-    *   **Internet Gateway:** For public internet access.
-    *   **Egress-Only Internet Gateway:** For IPv6 outbound traffic.
-*   **NAT Auto Scaling Group:**
-    *   Maintains 1 running `fck-nat` instance.
-    *   Uses an IAM Role to allow the instance to modify VPC route tables.
-    *   Runs a `user_data` script that automatically replaces the default route (`0.0.0.0/0`) in the private route table with its own Instance ID upon boot.
-*   **Private Workload:** A generic Ubuntu EC2 instance located in the private subnet to demonstrate outbound connectivity.
+*   **Cost Effective:** Uses `t4g.nano` or `t3.micro` instances instead of expensive AWS NAT Gateways.
+*   **Self-Healing:** If the NAT instance fails, the Auto Scaling Group launches a new one, and the route table is automatically updated.
+*   **Automation:** Includes a `Justfile` for one-command deployment and SSH tunneling.
+*   **VS Code Support:** Pre-configured tasks for easy execution from the editor.
 
 ## Prerequisites
 
-*   Terraform installed.
-*   AWS CLI configured with appropriate credentials.
+1.  **Terraform** installed.
+2.  **AWS CLI** configured with credentials.
+3.  **Just** installed (command runner).
 
-## Deployment Instructions
+## Quick Start
 
-1.  **Initialize Terraform:**
+The project uses `just` to handle Terraform commands and key permissions automatically.
+
+### 1. Initialize and Deploy
+```bash
+just init
+just apply
+```
+
+### 2. View Info
+Displays the generated keys and IP addresses.
+```bash
+just info
+```
+
+## Connecting to Instances
+
+This setup includes helper commands to handle SSH keys and tunneling automatically.
+
+### Connect to the NAT Instance (Public)
+Connects directly to the bastion/NAT host.
+```bash
+just ssh-nat
+```
+
+### Connect to the Private App
+Since the application server is in a private subnet, we use SSH tunneling.
+
+1.  **Open the tunnel in the background:**
     ```bash
-    terraform init
+    just ssh-tunnel
     ```
 
-2.  **Review the Plan:**
+2.  **Connect to the app:**
     ```bash
-    terraform plan
+    just ssh-app
     ```
 
-3.  **Apply the Configuration:**
+3.  **Close the tunnel when finished:**
     ```bash
-    terraform apply
+    just ssh-tunnel-close
     ```
 
-## Outputs
+## VS Code Integration
 
-After applying, Terraform will output the following:
+A `.vscode/tasks.json` file is included. You can run all the above commands directly from Visual Studio Code:
+1.  Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac).
+2.  Type `Run Task`.
+3.  Select any task (e.g., `⚡ Terraform Apply`, `💻 SSH to Private App`).
 
-*   `nat_public_ips`: The Public IP of the current NAT instance.
-*   `private_app_ip`: The Private IP of the Ubuntu application server.
-*   `private_key_path`: The local path to the generated SSH private key (`private_key.pem`).
+## Clean Up
 
-## How to Connect
+To destroy all resources:
+```bash
+just destroy
+```
 
-The private instance does not have a public IP. To access it, you must use the NAT instance as a bastion/jump host.
+## Troubleshooting
 
-1.  **Change key permissions:**
-    ```bash
-    chmod 400 private_key.pem
-    ```
-
-2.  **Connect to the NAT Instance (Bastion):**
-    ```bash
-    ssh -i private_key.pem ec2-user@<NAT_PUBLIC_IP>
-    ```
-
-3.  **From the NAT Instance, connect to the Private Instance:**
-    (Note: You will need to forward your agent or copy the key to jump to the next hop).
-
-## Automatic Failover Testing
-
-To test the self-healing capability:
-1.  Manually terminate the `fck-nat` instance in the AWS Console.
-2.  The Auto Scaling Group will detect the failure and launch a new instance.
-3.  The new instance will execute the startup script and take over the `0.0.0.0/0` route in the private route table automatically.
+*   **Key Permission Error:** Run `just fix-perms`.
+*   **Host Key Verification Failed:** Run `just ssh-clear` to remove old localhost entries from your known_hosts file.
+*   **Tunnel Issues:** Run `just ssh-tunnel-close` to clear old processes, then try opening the tunnel again.
