@@ -1,0 +1,16 @@
+{
+    "name": "Secure Terraform & Just (RHEL)",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "root",
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "hashicorp.terraform",
+                "skellock.just"
+            ]
+        }
+    }
+}
