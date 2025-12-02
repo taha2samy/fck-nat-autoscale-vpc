@@ -8,8 +8,8 @@ RUN dnf update $AUTO_CONFIRM && \
     git \
     curl \
     unzip \
-    yum-utils \
-    just
+    yum-utils 
+
 RUN yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
     dnf install $AUTO_CONFIRM terraform
 
