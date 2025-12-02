@@ -1,0 +1,149 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🌱 Terraform Init",
+            "type": "shell",
+            "command": "just init",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Initialize Terraform"
+        },
+        {
+            "label": "📋 Terraform Plan",
+            "type": "shell",
+            "command": "just plan",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Show Terraform plan"
+        },
+        {
+            "label": "⚡ Terraform Apply",
+            "type": "shell",
+            "command": "just apply",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Apply Terraform changes"
+        },
+        {
+            "label": "🗑 Terraform Destroy",
+            "type": "shell",
+            "command": "just destroy",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Destroy Terraform infrastructure"
+        },
+        {
+            "label": "🔄 Terraform Refresh",
+            "type": "shell",
+            "command": "just refresh",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Refresh Terraform state"
+        },
+        {
+            "label": "🔑 Fix Key Permissions",
+            "type": "shell",
+            "command": "just fix-perms",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Fix SSH key permissions (chmod 400)"
+        },
+        {
+            "label": "🛰 SSH to NAT",
+            "type": "shell",
+            "command": "just ssh-nat",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Connect to NAT instance via SSH"
+        },
+        {
+            "label": "🔗 Open SSH Tunnel",
+            "type": "shell",
+            "command": "just ssh-tunnel",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Open SSH tunnel to private app"
+        },
+        {
+            "label": "💻 SSH to Private App",
+            "type": "shell",
+            "command": "just ssh-app",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Connect to private app via SSH tunnel"
+        },
+        {
+            "label": "❌ Close SSH Tunnel",
+            "type": "shell",
+            "command": "just close-tunnel",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Close SSH tunnel to private app"
+        },
+        {
+            "label": "🧹 Clear SSH Key",
+            "type": "shell",
+            "command": "just ssh-clear",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Remove localhost:2222 entry from known_hosts"
+        }
+    ]
+}

@@ -1,0 +1,6 @@
+.terraform/
+.ssh_tunnel_pid
+.terraform.tfstate
+.terraform.tfstate.backup
+private_key.pem
+main.txt
